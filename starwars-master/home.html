@@ -1,0 +1,242 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <LINK REL="stylesheet" TYPE="text/css" HREF="starwars.css">
+    <style type="text/css">
+        div {
+            border: solid yellow 8px;
+            display: inline-block;
+            padding: 10px;
+            margin: 10px;
+            font-size: 1.3em;
+        }
+        }
+    </style>
+</head>
+
+<body>
+	<h1>Bienvenue dans le simulateur de citation Star Wars </h1>
+    <div id="root"></div>
+
+    <script type="text/javascript" src="../react/react.js"></script>
+    <script type="text/javascript" src="../react/JSXTransformer.js"></script>
+    <script type="text/javascript">
+    var count = 1;
+    var random = '';
+    var scoreOf = {};
+        var scoreIs = function(quote) {
+            return function (letter) {
+                scoreOf[letter] = quote;
+            };
+        };
+
+
+        var personnages = [ {
+  'author': 'Senator palpatine',
+  'quote': 'The Dark Side of the Force is the pathway to many abilities some consider to be.. Unnatural.',
+  'quote1': 'The Dark Side of the Force is the pathway to many abilities some consider to be.. Unnatural.',
+  'quote2': 'The Dark Side of the Force is the pathway to many abilities some consider to be.. Unnatural.',
+  'quote3': 'The Dark Side of the Force is the pathway to many abilities some consider to be.. Unnatural.',
+  'image': 'images/palpatine.jpg'
+}, {
+  'author': 'Count Dooku',
+  'quote': 'I sense great fear in you, Skywalker. You have hate... you have anger... but you don’t use them.',
+  'quote1': 'I sense great fear in you, Skywalker. You have hate... you have anger... but you don’t use them.',
+  'quote2': 'I sense great fear in you, Skywalker. You have hate... you have anger... but you don’t use them.',
+  'quote3': 'I sense great fear in you, Skywalker. You have hate... you have anger... but you don’t use them.',
+  'image': 'images/dooku.jpg'
+}, {
+  'author': 'Darth vader',
+  'quote': 'Luke, you can destroy the Emperor. He has foreseen this. It is your destiny. Join me, and together we can rule the galaxy as father and son.',
+  'quote1': 'The Force is strong with this one.',
+  'quote2': 'The Force is strong with this one.',
+  'quote3': 'The Force is strong with this one.',
+  'image': 'images/vador.jpg'
+}, {
+  'author': 'Princess leia',
+  'quote': 'Aren\'t you a little short for a storm trooper?',
+  'quote1': 'Aren\'t you a little short for a storm trooper?',
+  'quote2': 'Aren\'t you a little short for a storm trooper?',
+  'quote3': 'Aren\'t you a little short for a storm trooper?',
+  'image': 'images/leia.jpg'
+}, {
+  'author': 'Qui-Gon Jinn',
+  'quote': 'Your focus determines your reality',
+  'quote1': 'Your focus determines your reality',
+  'quote2': 'Your focus determines your reality',
+  'quote3': 'Your focus determines your reality',
+  'image': 'images/qui_gon_jinn.jpg'
+}, , {
+  'author': 'Obi-Wan-Kenobi',
+  'quote': 'In my experience there is no such thing as luck.',
+  'quote1': 'In my experience there is no such thing as luck.',
+  'quote2': 'In my experience there is no such thing as luck.',
+  'quote3': 'In my experience there is no such thing as luck.',
+  'image': 'images/obi_wan.jpg'
+}, {
+  'author': 'Yoda',
+  'quote': 'If once you start down the dark side, forever will it dominate your destiney, consume you it will, as it did Obi-Wan\'s apprentice',
+  'quote1': 'Do. Or do not. There is no try.',
+  'quote2': 'Mmm. Lost a planet, Master Obi-Wan has. How embarrassing.',
+  'quote3': 'When 900 years old, you reach… Look as good, you will not.',
+  'image': 'images/yoda.jpg'
+  }];
+
+
+    </script>
+
+
+    <script type="text/jsx">
+    var rString = '';
+    function randomString(length, chars) {
+        var result = '';
+         for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+         return result;
+       }
+
+
+    var Store = {
+        callbacks : [],
+
+        whenItemSelected : function (callback) {
+            this.callbacks.push(callback);
+        },
+
+        handleSelectAction : function(options) {
+            this.callbacks.forEach(function(callback) {
+                callback(options.letter);
+            });
+        }
+    };
+
+    var Action = {
+        select : function (item) {
+            Store.handleSelectAction({letter : item})
+        }
+    };
+
+
+    var Tree =  React.createClass({
+        render : function () {
+            return (<div>
+                <Personnages />
+				        <Citation />
+                <Random />
+
+
+            </div>);
+        },
+    });
+	// Affichage des personnages
+    var Personnages = React.createClass({
+
+        render : function () {
+
+            return (<div>
+                {personnages.map(function(item) {
+                    return <Perso itemValue={item} />;
+                })}
+            </div>);
+        },
+
+    });
+
+    var Perso = React.createClass({
+
+        render : function () {
+            var classname = this.state.selected ? 'selected' : '';
+            return (<div className={classname} onClick={this.handleClick}><img src={this.props.itemValue.image} width="110" height="110"/></div>);
+        },
+
+        getInitialState : function () {
+            return {selected : false };
+        },
+
+        componentDidMount : function() {
+            var comp = this;
+            Store.whenItemSelected(function(letter) {
+                comp.setState({selected : letter ===  comp.props.itemValue});
+            })
+        },
+
+        handleClick : function () {
+        rString = randomString(20, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        Action.select(this.props.itemValue);
+
+        }
+    });
+
+		//Affichage des citations
+	var Citation = React.createClass({
+
+        render : function () {
+          if(count == 1)
+          {
+            count = count + 1;
+            return (<div>
+                La citation de {this.state.letter.author} est: {this.state.letter.quote}
+            </div>);
+          }
+
+          if(count == 2)
+          {
+            count = count + 1;
+            return (<div>
+                La citation de {this.state.letter.author} est: {this.state.letter.quote1}
+            </div>);
+          }
+          if(count == 3)
+          {
+            count = count + 1;
+            return (<div>
+                La citation de {this.state.letter.author} est: {this.state.letter.quote2}
+            </div>);
+          }
+          if(count == 4)
+          {
+            count = count +1;
+            return (<div>
+                La citation de {this.state.letter.author} est: {this.state.letter.quote3}
+            </div>);
+          }
+          else {
+            {
+              count = 1;
+              return (<div>
+                  La citation de {this.state.letter.author} est: {this.state.letter.quote}
+              </div>);
+            }
+          }
+        },
+
+        getInitialState : function () {
+            return {letter : '' };
+        },
+
+        componentDidMount : function() {
+            var comp = this;
+            Store.whenItemSelected(function(newletter) {
+                comp.setState({letter : newletter});
+            })
+        },
+
+    });
+
+    var Random = React.createClass({
+         render : function () {
+             return (<div> Random: {rString} </div>);
+        },
+     });
+
+
+    React.render(<Tree />, document.getElementById('root'));
+
+
+
+
+    </script>
+
+
+
+</body>
+</html>

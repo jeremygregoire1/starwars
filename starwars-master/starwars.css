@@ -1,0 +1,10 @@
+body {
+ background-image:url(images/fond_ecran.jpg);
+font-family: 'FreeMono', sans-serif,;
+color: yellow;
+}
+h1 {
+  font-weight: bold;
+  font-family: 'FreeMono', sans-serif;
+  text-align: center;
+}
